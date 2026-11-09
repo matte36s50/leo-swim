@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Leo's Swim Times</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏊</text></svg>">
+<style>
+:root{--font-anthropic-sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+--color-fg:#16202b;--color-fg-muted:#5b6774;--color-bg:#f6fafd;--color-panel:#ffffff;--color-border-line:#dbe4ec;
+--color-ok:#14804a;--color-warn:#b26b00;--color-bad:#c0392b;
+--cds-font-size-caption:12px;--cds-font-size-body:15px;--cds-font-size-heading:20px;--cds-font-size-title:28px;
+--cds-gap-xs:4px;--cds-gap-sm:8px;--cds-gap-md:14px;--cds-gap-lg:20px;--cds-gap-xl:30px;
+--cds-pad-xs:4px;--cds-pad-sm:8px;--cds-pad-md:14px;--cds-pad-lg:18px;--cds-pad-xl:28px;--cds-radius:12px;
+--cds-surface-popover:#ffffff;--cds-border:#cfd9e2;--cds-shadow-popover:0 6px 20px rgba(10,40,70,.18);--cds-text-secondary:#5b6774}
+@media (prefers-color-scheme:dark){:root{--color-fg:#e8eef4;--color-fg-muted:#9fb0c0;--color-bg:#0d1620;--color-panel:#15212d;--color-border-line:#26384a;
+--color-ok:#4cc38a;--cds-surface-popover:#1b2a38;--cds-border:#2d4256;--cds-shadow-popover:0 6px 20px rgba(0,0,0,.5);--cds-text-secondary:#9fb0c0}}
+html{background:var(--color-bg)}
+body{margin:0;background:var(--color-bg);color:var(--color-fg);font-family:var(--font-anthropic-sans);-webkit-text-size-adjust:100%}
+.page{max-width:1000px;margin:0 auto;padding:16px 16px 40px}
+.page-foot{margin-top:28px;color:var(--color-fg-muted);font-size:12px;text-align:center}
+
+
+.lv{--lv-deep:#0a5c9e;--lv-mid:#1683c9;--lv-light:#3fb4ec;--lv-water:color-mix(in srgb,#2aa0e6 14%,transparent);--lv-water2:color-mix(in srgb,#2aa0e6 26%,transparent);--lv-tline:color-mix(in srgb,#0a3d91 40%,transparent);font-family:var(--font-anthropic-sans);color:var(--color-fg);display:flex;flex-direction:column;gap:var(--cds-gap-xl)}
+.lv [data-dash-source-state=refreshing]{opacity:.5}
+.lv-hero{position:relative;overflow:hidden;border-radius:calc(var(--cds-radius) * 2);background:linear-gradient(180deg,#0866b0 0%,#1597dc 62%,#46c1ef 100%);color:#fff;padding:var(--cds-pad-xl) var(--cds-pad-xl) 72px}
+.lv-kicker{text-transform:uppercase;letter-spacing:.14em;font-size:var(--cds-font-size-caption);font-weight:700;opacity:.92}
+.lv-hero h1{margin:6px 0 0;font-size:clamp(30px,6.5vw,48px);font-weight:800;letter-spacing:-.015em;line-height:1.05}
+.lv-take{margin:var(--cds-gap-md) 0 0;font-size:clamp(15px,2.2vw,18px);line-height:1.55;max-width:62ch;position:relative;z-index:2}
+.lv-take b{font-weight:800;background:rgba(255,255,255,.2);padding:0 .3em;border-radius:6px;white-space:nowrap}
+.lv-waves{position:absolute;left:0;bottom:-1px;height:58px;width:200%;z-index:1}
+.lv-bubbles{position:absolute;inset:0;pointer-events:none;z-index:0}
+.lv-bubbles span{position:absolute;bottom:-20px;border-radius:50%;border:2px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12)}
+.lv-bubbles span:nth-child(1){left:72%;width:14px;height:14px;bottom:30%}
+.lv-bubbles span:nth-child(2){left:82%;width:22px;height:22px;bottom:55%}
+.lv-bubbles span:nth-child(3){left:90%;width:10px;height:10px;bottom:40%}
+.lv-bubbles span:nth-child(4){left:65%;width:9px;height:9px;bottom:70%}
+.lv-bubbles span:nth-child(5){left:94%;width:16px;height:16px;bottom:72%}
+.lv-bubbles span:nth-child(6){left:77%;width:8px;height:8px;bottom:18%}
+@media (prefers-reduced-motion:no-preference){
+.lv-waves{animation:lv-wave 9s linear infinite}
+.lv-bubbles span{animation:lv-rise 7s ease-in infinite}
+.lv-bubbles span:nth-child(2){animation-duration:9s;animation-delay:-3s}
+.lv-bubbles span:nth-child(3){animation-duration:6s;animation-delay:-1s}
+.lv-bubbles span:nth-child(4){animation-duration:8s;animation-delay:-5s}
+.lv-bubbles span:nth-child(5){animation-duration:10s;animation-delay:-2s}
+.lv-bubbles span:nth-child(6){animation-duration:7.5s;animation-delay:-4s}
+}
+@keyframes lv-wave{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes lv-rise{0%{transform:translateY(40px);opacity:0}15%{opacity:1}100%{transform:translateY(-160px);opacity:0}}
+.lv-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:var(--cds-gap-md)}
+.lv-stat{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-md) var(--cds-pad-lg);display:flex;flex-direction:column;gap:2px;position:relative;overflow:hidden}
+.lv-stat::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:repeating-linear-gradient(90deg,#e53935 0 10px,#fff 10px 20px,#1e63c4 20px 30px);opacity:.85}
+.lv-stat-ic{font-size:22px;line-height:1}
+.lv-stat b{font-size:34px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--lv-mid)}
+.lv-stat span:last-child{color:var(--color-fg-muted);font-size:var(--cds-font-size-caption);line-height:1.35}
+.lv-sec h2{margin:0;font-size:clamp(20px,3vw,26px);font-weight:800;letter-spacing:-.01em}
+.lv-sub{margin:4px 0 var(--cds-gap-md);color:var(--color-fg-muted);font-size:var(--cds-font-size-body);line-height:1.5;max-width:70ch}
+.lv-ghosts{display:flex;flex-direction:column;gap:var(--cds-gap-md);position:relative;min-height:120px}
+.lv-race{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-md) var(--cds-pad-lg)}
+.lv-race-head{display:flex;justify-content:space-between;align-items:baseline;gap:var(--cds-gap-sm);flex-wrap:wrap;margin-bottom:8px}
+.lv-ev{font-weight:800;font-size:18px}
+.lv-gain{font-weight:700;color:var(--color-ok)}
+.lv-gain b{font-size:20px;font-variant-numeric:tabular-nums}
+.lv-lane{position:relative;height:72px;border-radius:8px;background:linear-gradient(180deg,var(--lv-water2),var(--lv-water));overflow:hidden}
+.lv-rope{position:absolute;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,#e53935 0 10px,#fff 10px 20px,#1e63c4 20px 30px)}
+.lv-rope-top{top:0}.lv-rope-bot{bottom:0}
+.lv-tline{position:absolute;left:16px;right:16px;top:50%;height:5px;margin-top:-2.5px;background:var(--lv-tline);border-radius:3px}
+.lv-tline::before,.lv-tline::after{content:"";position:absolute;top:-9px;width:5px;height:23px;background:var(--lv-tline);border-radius:3px}
+.lv-tline::before{left:-4px}.lv-tline::after{right:-4px}
+.lv-wall{position:absolute;top:0;bottom:0;width:7px;background:repeating-linear-gradient(180deg,#0a3d91 0 8px,#fff 8px 16px);opacity:.9}
+.lv-wall-l{left:0}.lv-wall-r{right:0}
+.lv-flags{position:absolute;top:5px;bottom:5px;border-left:3px dotted rgba(229,57,53,.75);transform:translateX(-50%)}
+.lv-band{position:absolute;top:5px;bottom:5px;z-index:1;background:color-mix(in srgb,#ffd23f 40%,transparent);border-left:2px dashed #e0a800}
+.lv-bandlabel{position:absolute;top:2px;left:50%;transform:translateX(-50%);background:#ffd23f;color:#3b2a00;font-size:11px;font-weight:800;padding:0 6px;border-radius:999px;white-space:nowrap}
+.lv-bandlabel b{font-variant-numeric:tabular-nums}
+.lv-sw{position:absolute;top:50%;font-size:28px;line-height:1;z-index:2;cursor:default;user-select:none;transform:translate(-50%,-50%)}
+.lv-ghost{opacity:.8;filter:saturate(.6)}
+.lv-ruler{position:relative;height:15px;margin-top:3px;font-size:11px;color:var(--color-fg-muted)}
+.lv-ruler span{position:absolute;top:0;transform:translateX(-50%);font-variant-numeric:tabular-nums;white-space:nowrap}
+.lv-race-foot{margin-top:8px;color:var(--color-fg-muted);font-size:var(--cds-font-size-body)}
+.lv-race-foot b{color:var(--color-fg);font-variant-numeric:tabular-nums}
+.lv-race-foot .lv-now{color:var(--lv-mid)}
+.lv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--cds-gap-md);position:relative;min-height:120px}
+.lv-card{background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:var(--cds-pad-md) var(--cds-pad-lg);display:flex;flex-direction:column;gap:6px}
+.lv-chase{border-left:7px solid var(--lv-light)}
+.lv-lvl-bronze{border-left-color:#c97a3a}.lv-lvl-silver{border-left-color:#9aa6b2}.lv-lvl-ag{border-left-color:#e2a700}.lv-lvl-none{border-left-color:var(--lv-light)}
+.lv-chase-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lv-badge{font-size:26px;line-height:1}
+.lv-chip{margin-left:auto;font-size:var(--cds-font-size-caption);font-weight:800;padding:2px 8px;border-radius:999px;background:#ffd23f;color:#3b2a00}
+.lv-best{color:var(--color-fg-muted)}
+.lv-time{font-size:22px;font-weight:800;color:var(--color-fg);font-variant-numeric:tabular-nums}
+.lv-lvl{color:var(--color-fg-muted);font-size:var(--cds-font-size-body)}
+.lv-lvl b{color:var(--color-fg)}
+.lv-gapline{font-size:var(--cds-font-size-body)}
+.lv-gapnum{font-size:20px;color:var(--lv-mid);font-variant-numeric:tabular-nums}
+.lv-prog{position:relative;height:16px;border-radius:999px;background:var(--lv-water2);margin:4px 22px 0 0}
+.lv-prog-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--lv-mid),var(--lv-light))}
+.lv-flag{position:absolute;right:-22px;top:50%;transform:translateY(-50%);font-size:16px}
+.lv-proglabel{color:var(--color-fg-muted);font-size:var(--cds-font-size-caption)}
+.lv-proglabel b{color:var(--color-fg)}
+.lv-split-head{display:flex;flex-direction:column;margin-bottom:4px}
+.lv-meet{color:var(--color-fg-muted);font-size:var(--cds-font-size-caption)}
+.lv-split-row{display:grid;grid-template-columns:56px 1fr auto 18px;align-items:center;gap:8px}
+.lv-split-label{font-size:var(--cds-font-size-caption);color:var(--color-fg-muted)}
+.lv-split-bar{height:18px;border-radius:0 9px 9px 0;background:var(--lv-water)}
+.lv-split-fill{height:100%;border-radius:0 9px 9px 0;background:linear-gradient(90deg,var(--lv-mid),var(--lv-light))}
+.lv-split-val{font-variant-numeric:tabular-nums;font-weight:700;text-align:right;min-width:48px}
+.lv-split-fast{font-size:14px}
+.lv-tablewrap{overflow-x:auto;border:1px solid var(--color-border-line);border-radius:var(--cds-radius)}
+.lv-table{width:100%;border-collapse:collapse;font-size:var(--cds-font-size-body)}
+.lv-table th{text-align:left;font-weight:700;padding:10px 12px;background:var(--lv-water);white-space:nowrap}
+.lv-table td{padding:9px 12px;border-top:1px solid var(--color-border-line);white-space:nowrap}
+.lv-table .lv-num{font-variant-numeric:tabular-nums}
+.lv-table .lv-strong{font-weight:800}
+.lv-notes{color:var(--color-fg-muted);font-size:var(--cds-font-size-body)}
+.lv-notes summary{cursor:pointer;font-weight:700;color:var(--color-fg)}
+.lv-notes p{line-height:1.55;max-width:75ch}
+.lv-empty{color:var(--color-fg-muted)}
+.lv-tip{position:absolute;z-index:10;pointer-events:none;background:var(--cds-surface-popover);border:1px solid var(--cds-border);box-shadow:var(--cds-shadow-popover);color:var(--color-fg);font-size:var(--cds-font-size-caption);padding:5px 9px;border-radius:7px;white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="page">
+<div class="lv">
+  <header class="lv-hero" id="hero">
+    <div class="lv-bubbles" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="lv-kicker">Upper Valley Aquatic Club</div>
+    <h1>Leo's Swim Times <span aria-hidden="true">🏊</span></h1>
+    <p class="lv-take" data-draw="takeaway">—</p>
+    <svg class="lv-waves" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 28 Q 75 6 150 28 T 300 28 T 450 28 T 600 28 T 750 28 T 900 28 T 1050 28 T 1200 28 V60 H0 Z" fill="rgba(255,255,255,.28)"></path><path d="M0 40 Q 75 20 150 40 T 300 40 T 450 40 T 600 40 T 750 40 T 900 40 T 1050 40 T 1200 40 V60 H0 Z" fill="var(--color-bg)"></path></svg>
+  </header>
+
+  <section class="lv-stats" id="stats" aria-label="Season numbers">
+    <div class="lv-stat"><span class="lv-stat-ic" aria-hidden="true">🏁</span><b data-draw="stat" data-source="stats" data-field="races" data-row="0">—</b><span>races swum</span></div>
+    <div class="lv-stat"><span class="lv-stat-ic" aria-hidden="true">🌊</span><b data-draw="stat" data-source="stats" data-field="events" data-row="0">—</b><span>different events</span></div>
+    <div class="lv-stat"><span class="lv-stat-ic" aria-hidden="true">⚡</span><b data-draw="stat" data-source="stats" data-field="faster" data-row="0">—</b><span>events where he got faster</span></div>
+    <div class="lv-stat"><span class="lv-stat-ic" aria-hidden="true">🥉</span><b data-draw="stat" data-source="stats" data-field="medals" data-row="0">—</b><span>events at Bronze or better</span></div>
+  </section>
+
+  <section class="lv-sec" id="ghost-race">
+    <h2><span aria-hidden="true">👻</span> Race your old self</h2>
+    <p class="lv-sub">Today's Leo 🏊 races old Leo 👻 in a <b data-draw="pool">—</b>-yard pool, turns and all. When today's Leo touches the wall, the yellow stretch is how far old Leo still has to swim.</p>
+    <div class="lv-ghosts" data-draw="ghost" data-source="events"></div>
+  </section>
+
+  <section class="lv-sec" id="medal-chase">
+    <h2><span aria-hidden="true">🎯</span> Medal chase</h2>
+    <p class="lv-sub">Meets list cutoff times for three levels: Bronze, Silver and AG (the top one). Swim the cutoff time or faster and that level is yours. The closest goal comes first.</p>
+    <div class="lv-grid" data-draw="chase" data-source="chase"></div>
+  </section>
+
+  <section class="lv-sec" id="splits">
+    <h2><span aria-hidden="true">⏱️</span> Lap by lap</h2>
+    <p class="lv-sub">How long each 50 took in the races that have split times. ⚡ marks the fastest 50 of each race.</p>
+    <div class="lv-grid" data-draw="splits" data-source="splits"></div>
+  </section>
+
+  <section class="lv-sec" id="every-swim">
+    <h2><span aria-hidden="true">📋</span> Every swim</h2>
+    <p class="lv-sub">Newest first. "Entry time" is the best time Leo was entered with before a meet.</p>
+    <div class="lv-tablewrap">
+      <table class="lv-table" data-source="times" data-row-key="event,date">
+        <thead><tr><th data-field="event">Event</th><th data-field="time">Time</th><th data-field="place">Place</th><th data-field="level">Level</th><th data-field="meet">Meet</th><th data-field="when">When</th><th data-field="kind">Type</th></tr></thead>
+        <tbody data-draw="rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <details class="lv-notes" id="notes">
+    <summary>Where these times come from</summary>
+    <p>Race times, places and splits come from the UVAC meet result sheets. Entry times come from the December 2025 Winter Classic psych sheet. The Bronze, Silver and AG cutoffs are the boys 11–12 cutoffs printed on the meet results. "Old Leo" is his earliest time on file in that event, and "yards ahead" is how far old Leo would still have to swim when today's Leo finishes, if both swam at an even pace.</p>
+  </details>
+</div>
+<p class="page-foot">Times from UVAC meet results · updated November 9, 2026</p>
+</main>
+<script>
+window.dash = (function () {
+  var SOURCES = {"times": [{"event": "50 Back", "distance": "50", "kind": "Entry time", "meet": "Winter Classic psych sheet", "date": "2025-12-05", "when": "Dec 2025", "time": "46.97", "seconds": "46.97", "place": null, "level": null}, {"event": "100 Free", "distance": "100", "kind": "Entry time", "meet": "Winter Classic psych sheet", "date": "2025-12-05", "when": "Dec 2025", "time": "1:33.31", "seconds": "93.31", "place": null, "level": null}, {"event": "200 Back", "distance": "200", "kind": "Entry time", "meet": "Winter Classic psych sheet", "date": "2025-12-05", "when": "Dec 2025", "time": "3:35.42", "seconds": "215.42", "place": null, "level": null}, {"event": "50 Free", "distance": "50", "kind": "Race", "meet": "UVAC October Invite", "date": "2026-10-17", "when": "Oct 17 2026", "time": "37.60", "seconds": "37.60", "place": "9", "level": "Bronze"}, {"event": "200 Free", "distance": "200", "kind": "Race", "meet": "UVAC October Invite", "date": "2026-10-17", "when": "Oct 17 2026", "time": "2:57.19", "seconds": "177.19", "place": "3", "level": null}, {"event": "100 Breast", "distance": "100", "kind": "Race", "meet": "UVAC October Invite", "date": "2026-10-17", "when": "Oct 17 2026", "time": "1:52.62", "seconds": "112.62", "place": "3", "level": null}, {"event": "50 Fly", "distance": "50", "kind": "Race", "meet": "UVAC October Invite", "date": "2026-10-17", "when": "Oct 17 2026", "time": "45.83", "seconds": "45.83", "place": "7", "level": "Bronze"}, {"event": "50 Fly", "distance": "50", "kind": "Race", "meet": "Dorsi Raynolds Memorial", "date": "2026-11-06", "when": "Nov 6–8 2026", "time": "42.32", "seconds": "42.32", "place": "11", "level": "Bronze"}, {"event": "50 Back", "distance": "50", "kind": "Race", "meet": "Dorsi Raynolds Memorial", "date": "2026-11-06", "when": "Nov 6–8 2026", "time": "42.45", "seconds": "42.45", "place": "19", "level": "Bronze"}, {"event": "100 Free", "distance": "100", "kind": "Race", "meet": "Dorsi Raynolds Memorial", "date": "2026-11-06", "when": "Nov 6–8 2026", "time": "1:20.93", "seconds": "80.93", "place": "19", "level": "Bronze"}, {"event": "200 IM", "distance": "200", "kind": "Race", "meet": "Dorsi Raynolds Memorial", "date": "2026-11-06", "when": "Nov 6–8 2026", "time": "3:20.67", "seconds": "200.67", "place": "11", "level": null}], "standards": [{"event": "50 Free", "level": "AG", "seconds": "28.09"}, {"event": "50 Free", "level": "Silver", "seconds": "31.49"}, {"event": "50 Free", "level": "Bronze", "seconds": "38.79"}, {"event": "100 Free", "level": "AG", "seconds": "61.19"}, {"event": "100 Free", "level": "Silver", "seconds": "67.99"}, {"event": "100 Free", "level": "Bronze", "seconds": "83.79"}, {"event": "200 Free", "level": "AG", "seconds": "134.59"}, {"event": "200 Free", "level": "Silver", "seconds": "156.29"}, {"event": "200 Free", "level": "Bronze", "seconds": "172.39"}, {"event": "50 Back", "level": "AG", "seconds": "32.89"}, {"event": "50 Back", "level": "Silver", "seconds": "36.59"}, {"event": "50 Back", "level": "Bronze", "seconds": "46.99"}, {"event": "100 Breast", "level": "AG", "seconds": "81.99"}, {"event": "100 Breast", "level": "Silver", "seconds": "89.89"}, {"event": "100 Breast", "level": "Bronze", "seconds": "109.99"}, {"event": "50 Fly", "level": "AG", "seconds": "31.49"}, {"event": "50 Fly", "level": "Silver", "seconds": "35.59"}, {"event": "50 Fly", "level": "Bronze", "seconds": "47.99"}, {"event": "200 IM", "level": "AG", "seconds": "152.99"}, {"event": "200 IM", "level": "Silver", "seconds": "170.69"}, {"event": "200 IM", "level": "Bronze", "seconds": "199.99"}], "splits": [{"event": "100 Free", "meet": "Dorsi Raynolds Memorial", "leg": "1", "label": "1st 50", "seconds": "38.58"}, {"event": "100 Free", "meet": "Dorsi Raynolds Memorial", "leg": "2", "label": "2nd 50", "seconds": "42.35"}, {"event": "200 IM", "meet": "Dorsi Raynolds Memorial", "leg": "1", "label": "Fly", "seconds": "48.16"}, {"event": "200 IM", "meet": "Dorsi Raynolds Memorial", "leg": "2", "label": "Back", "seconds": "48.34"}, {"event": "200 IM", "meet": "Dorsi Raynolds Memorial", "leg": "3", "label": "Breast", "seconds": "59.53"}, {"event": "200 IM", "meet": "Dorsi Raynolds Memorial", "leg": "4", "label": "Free", "seconds": "44.64"}, {"event": "200 Free", "meet": "UVAC October Invite", "leg": "1", "label": "1st 50", "seconds": "38.49"}, {"event": "200 Free", "meet": "UVAC October Invite", "leg": "2", "label": "2nd 50", "seconds": "44.83"}, {"event": "200 Free", "meet": "UVAC October Invite", "leg": "3", "label": "3rd 50", "seconds": "48.29"}, {"event": "200 Free", "meet": "UVAC October Invite", "leg": "4", "label": "4th 50", "seconds": "45.58"}, {"event": "100 Breast", "meet": "UVAC October Invite", "leg": "1", "label": "1st 50", "seconds": "55.38"}, {"event": "100 Breast", "meet": "UVAC October Invite", "leg": "2", "label": "2nd 50", "seconds": "57.24"}]};
+  var calcs = {}, draws = [], cache = {};
+  function data(id) {
+    if (SOURCES[id]) return { status: 'ok', data: SOURCES[id] };
+    var c = calcs[id];
+    if (c) {
+      if (!(id in cache)) cache[id] = c.fn.apply(null, c.inputs.map(function (i) { return data(i).data; }));
+      return { status: 'ok', data: cache[id] };
+    }
+    return { status: 'missing', data: [] };
+  }
+  return {
+    data: data,
+    calc: function (id, o) { calcs[id] = o; },
+    draw: function (name, fn) { draws.push([name, fn]); },
+    run: function () {
+      draws.forEach(function (d) {
+        document.querySelectorAll('[data-draw="' + d[0] + '"]').forEach(function (el) { d[1](el); });
+      });
+    }
+  };
+})();
+</script>
+<script>
+const enc = (v) => String(v).replace(/%/g, '%25').replace(/&/g, '%26').replace(/=/g, '%3D');
+const W = (pairs) => pairs.map(([k, v]) => enc(k) + '=' + enc(v)).join('&');
+function mk(tag, cls, text, src, field, where) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  if (src) {
+    e.setAttribute('data-source', src);
+    e.setAttribute('data-field', field);
+    if (where) e.setAttribute('data-where', where);
+  }
+  return e;
+}
+const s2 = (n) => Number(n).toFixed(2);
+const motionOK = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: no-preference)').matches);
+function tipper(root) {
+  const t = document.createElement('div');
+  t.className = 'lv-tip';
+  t.hidden = true;
+  root.appendChild(t);
+  return (node, text) => {
+    const show = (ev) => {
+      const b = root.getBoundingClientRect();
+      t.textContent = text;
+      t.hidden = false;
+      const w = t.offsetWidth;
+      t.style.left = Math.max(0, Math.min(ev.clientX - b.left + 12, root.clientWidth - w)) + 'px';
+      t.style.top = (ev.clientY - b.top + 18) + 'px';
+    };
+    node.addEventListener('pointermove', show);
+    node.addEventListener('pointerdown', show);
+    node.addEventListener('pointerleave', () => { t.hidden = true; });
+  };
+}
+
+dash.calc('events', {
+  inputs: ['times'],
+  title: 'Each event: best, first and latest time',
+  description: 'For each event Leo has raced: his best time, his earliest and latest time on file, how many seconds faster he got, and how many yards ahead of his earliest time that puts him.',
+  fn: (times) => {
+    const byEvent = new Map();
+    for (const r of times) {
+      if (!byEvent.has(r.event)) byEvent.set(r.event, []);
+      byEvent.get(r.event).push(r);
+    }
+    const out = [];
+    for (const [event, rows] of byEvent) {
+      if (!rows.some((r) => r.kind === 'Race')) continue;
+      const sorted = rows.slice().sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+      const first = sorted[0];
+      const latest = sorted[sorted.length - 1];
+      const best = rows.reduce((a, b) => (Number(b.seconds) < Number(a.seconds) ? b : a));
+      const twoOrMore = sorted.length > 1;
+      const f = Number(first.seconds);
+      const l = Number(latest.seconds);
+      const dist = Number(latest.distance);
+      out.push({
+        event,
+        distance: dist,
+        swims: rows.length,
+        best_time: best.time,
+        best: Number(best.seconds),
+        first_time: twoOrMore ? first.time : null,
+        first: twoOrMore ? f : null,
+        latest_time: latest.time,
+        latest: l,
+        drop: twoOrMore ? Math.round((f - l) * 100) / 100 : null,
+        yards_ahead: twoOrMore ? Math.round(dist * (1 - l / f) * 10) / 10 : null,
+      });
+    }
+    return out;
+  },
+});
+
+dash.calc('chase', {
+  inputs: ['events', 'standards'],
+  title: 'Time standard reached and next goal',
+  description: 'For each event: the highest level Leo\'s best time has reached, the next level up, and how many seconds he needs to drop to get it.',
+  fn: (events, standards) => {
+    const fmt = (s) => {
+      const m = Math.floor(s / 60);
+      const r = s - m * 60;
+      return m ? m + ':' + (r < 10 ? '0' : '') + r.toFixed(2) : r.toFixed(2);
+    };
+    const out = [];
+    for (const e of events) {
+      const cuts = standards
+        .filter((s) => s.event === e.event)
+        .map((s) => ({ level: s.level, cut: Number(s.seconds) }))
+        .sort((a, b) => a.cut - b.cut);
+      if (!cuts.length) continue;
+      const made = cuts.filter((c) => e.best <= c.cut);
+      const reached = made.length ? made[0] : null;
+      const idx = reached ? cuts.indexOf(reached) : cuts.length;
+      const next = idx > 0 ? cuts[idx - 1] : null;
+      out.push({
+        event: e.event,
+        best_time: e.best_time,
+        best: e.best,
+        level: reached ? reached.level : 'None yet',
+        next: next ? next.level : null,
+        next_cut: next ? next.cut : null,
+        next_cut_time: next ? fmt(next.cut) : null,
+        gap: next ? Math.round((e.best - next.cut) * 100) / 100 : null,
+        progress: next ? Math.round((next.cut / e.best) * 1000) / 10 : 100,
+      });
+    }
+    return out.sort((a, b) => (a.gap == null ? 1e9 : a.gap) - (b.gap == null ? 1e9 : b.gap));
+  },
+});
+
+dash.calc('stats', {
+  inputs: ['times', 'events', 'chase'],
+  title: 'Season numbers',
+  description: 'Counts of races swum, events raced, events where Leo got faster, and events at Bronze or better.',
+  fn: (times, events, chase) => [{
+    races: times.filter((r) => r.kind === 'Race').length,
+    events: events.length,
+    repeat: events.filter((e) => e.drop != null).length,
+    faster: events.filter((e) => e.drop != null && e.drop > 0).length,
+    medals: chase.filter((c) => c.level !== 'None yet').length,
+  }],
+});
+
+dash.draw('stat', (el) => {
+  const g = dash.data('stats');
+  const f = el.getAttribute('data-field');
+  el.textContent = g.status === 'ok' && g.data && g.data[0] && g.data[0][f] != null ? String(g.data[0][f]) : '—';
+});
+
+dash.draw('takeaway', (el) => {
+  const st = dash.data('stats');
+  const ev = dash.data('events');
+  const ch = dash.data('chase');
+  if (st.status !== 'ok' || ev.status !== 'ok' || ch.status !== 'ok' || !st.data || !st.data[0] || !ev.data || !ch.data) {
+    el.replaceChildren('—');
+    return;
+  }
+  const s = st.data[0];
+  const parts = [];
+  const top = ev.data.filter((e) => e.drop != null && e.drop > 0).sort((a, b) => b.drop - a.drop)[0];
+  if (s.repeat > 0) {
+    const nf = mk('b', null, String(s.faster), 'stats', 'faster');
+    nf.setAttribute('data-row', '0');
+    const nr = mk('b', null, String(s.repeat), 'stats', 'repeat');
+    nr.setAttribute('data-row', '0');
+    parts.push('Leo got faster in ', nf, ' of the ', nr, ' events he has swum more than once. ');
+  }
+  if (top) {
+    const w = W([['event', top.event]]);
+    parts.push('Biggest drop: ', mk('b', null, s2(top.drop), 'events', 'drop', w), ' seconds in the ', mk('b', null, top.event, 'events', 'event', w), '! ');
+  }
+  const close = ch.data.find((c) => c.gap != null);
+  if (close) {
+    const w = W([['event', close.event]]);
+    parts.push('Next goal: just ', mk('b', null, s2(close.gap), 'chase', 'gap', w), ' seconds to ', mk('b', null, close.next, 'chase', 'next', w), ' in the ', mk('b', null, close.event, 'chase', 'event', w), '.');
+  }
+  el.replaceChildren(...(parts.length ? parts : ['—']));
+});
+
+const POOL = 25;
+dash.draw('pool', (el) => {
+  el.textContent = String(POOL);
+});
+const poolX = (f) => 'calc(18px + (100% - 36px) * ' + f.toFixed(4) + ')';
+function inPool(d, D) {
+  const last = Math.max(1, Math.round(D / POOL)) - 1;
+  const k = Math.min(last, Math.floor(d / POOL));
+  const p = Math.min(POOL, d - k * POOL);
+  const right = (last - k) % 2 === 0;
+  return { x: right ? p / POOL : 1 - p / POOL, right, final: k === last };
+}
+function putSwimmer(node, at, turns) {
+  node.style.left = poolX(at.x);
+  node.style.transform = 'translate(-50%,-50%)' + (turns && at.right ? ' scaleX(-1)' : '');
+}
+
+let ghostRaced = false;
+let raceRAF = 0;
+dash.draw('ghost', (el) => {
+  if (raceRAF) {
+    cancelAnimationFrame(raceRAF);
+    raceRAF = 0;
+  }
+  const g = dash.data('events');
+  if (g.status !== 'ok' || !g.data) {
+    el.replaceChildren(g.status === 'error' ? 'Failed to load' : '—');
+    return;
+  }
+  const rows = g.data.filter((r) => r.first != null).sort((a, b) => b.drop - a.drop);
+  el.replaceChildren();
+  const tip = tipper(el);
+  const anim = !ghostRaced && motionOK() && rows.length > 0;
+  const lanes = [];
+  for (const r of rows) {
+    const w = W([['event', r.event]]);
+    const D = Number(r.distance);
+    const leoT = Number(r.latest);
+    const oldT = Number(r.first);
+    const tEnd = Math.min(leoT, oldT);
+    const card = mk('div', 'lv-race');
+    card.id = 'race-' + String(r.event).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const head = mk('div', 'lv-race-head');
+    head.append(mk('span', 'lv-ev', r.event, 'events', 'event', w));
+    const gain = mk('span', 'lv-gain');
+    if (r.drop > 0) gain.append(mk('b', null, Number(r.yards_ahead).toFixed(1), 'events', 'yards_ahead', w), ' yards ahead! 🎉');
+    else gain.append('Old Leo wins this one. Rematch!');
+    head.append(gain);
+    const lane = mk('div', 'lv-lane');
+    lane.setAttribute('role', 'img');
+    lane.setAttribute('aria-label', r.event + ' in a ' + POOL + '-yard pool: Leo now ' + r.latest_time + ', old Leo ' + r.first_time);
+    lane.append(mk('div', 'lv-rope lv-rope-top'), mk('div', 'lv-rope lv-rope-bot'), mk('div', 'lv-tline'));
+    for (const f of [5 / POOL, 1 - 5 / POOL]) {
+      const fl = mk('div', 'lv-flags');
+      fl.style.left = poolX(f);
+      lane.append(fl);
+    }
+    lane.append(mk('div', 'lv-wall lv-wall-l'), mk('div', 'lv-wall lv-wall-r'));
+    const endLeo = inPool(D * Math.min(1, tEnd / leoT), D);
+    const endOld = inPool(D * Math.min(1, tEnd / oldT), D);
+    const behind = leoT <= oldT ? endOld : endLeo;
+    const showBand = behind.final && behind.x < 1;
+    const band = mk('div', 'lv-band');
+    band.hidden = true;
+    if (showBand) {
+      band.style.left = poolX(behind.x);
+      band.style.width = 'calc((100% - 36px) * ' + (1 - behind.x).toFixed(4) + ')';
+      if (r.drop > 0) {
+        const lab = mk('span', 'lv-bandlabel');
+        lab.append(mk('b', null, Number(r.yards_ahead).toFixed(1), 'events', 'yards_ahead', w), ' yd');
+        band.append(lab);
+      }
+    }
+    const ghost = mk('span', 'lv-sw lv-ghost', '👻');
+    const leo = mk('span', 'lv-sw lv-leo', '🏊');
+    lane.append(band, ghost, leo);
+    tip(ghost, 'Old Leo · ' + r.first_time);
+    tip(leo, 'Leo now · ' + r.latest_time);
+    const ruler = mk('div', 'lv-ruler');
+    ruler.setAttribute('aria-hidden', 'true');
+    for (let y = 0; y <= POOL; y += 5) {
+      const s = mk('span', null, y === POOL ? y + ' yd' : String(y));
+      s.style.left = poolX(y / POOL);
+      ruler.append(s);
+    }
+    const foot = mk('div', 'lv-race-foot');
+    foot.append('Then ', mk('b', null, r.first_time, 'events', 'first_time', w), ' → now ', mk('b', 'lv-now', r.latest_time, 'events', 'latest_time', w), ' · ', mk('b', null, s2(r.drop), 'events', 'drop', w), r.drop >= 0 ? ' seconds faster' : ' seconds (slower)');
+    card.append(head, lane, ruler, foot);
+    el.appendChild(card);
+    if (anim) {
+      putSwimmer(leo, inPool(0, D), true);
+      putSwimmer(ghost, inPool(0, D), false);
+      lanes.push({ leo, ghost, band, showBand, D, leoT, oldT, tEnd, ms: (D / POOL) * 900 });
+    } else {
+      putSwimmer(leo, endLeo, true);
+      putSwimmer(ghost, endOld, false);
+      band.hidden = !showBand;
+    }
+  }
+  if (!rows.length) el.append(mk('p', 'lv-empty', 'No event has two times yet. Swim one again to race old Leo!'));
+  if (anim) {
+    ghostRaced = true;
+    let start = 0;
+    const step = (now) => {
+      if (!start) start = now;
+      let going = false;
+      for (const L of lanes) {
+        const u = Math.min(1, (now - start) / L.ms);
+        const t = L.tEnd * u;
+        putSwimmer(L.leo, inPool(L.D * Math.min(1, t / L.leoT), L.D), true);
+        putSwimmer(L.ghost, inPool(L.D * Math.min(1, t / L.oldT), L.D), false);
+        if (u < 1) going = true;
+        else L.band.hidden = !L.showBand;
+      }
+      raceRAF = going ? requestAnimationFrame(step) : 0;
+    };
+    raceRAF = requestAnimationFrame(step);
+  }
+});
+
+const LEVELS = { Bronze: ['🥉', 'lv-lvl-bronze'], Silver: ['🥈', 'lv-lvl-silver'], AG: ['🥇', 'lv-lvl-ag'] };
+dash.draw('chase', (el) => {
+  const g = dash.data('chase');
+  if (g.status !== 'ok' || !g.data) {
+    el.replaceChildren(g.status === 'error' ? 'Failed to load' : '—');
+    return;
+  }
+  el.replaceChildren();
+  const tip = tipper(el);
+  for (const r of g.data) {
+    const w = W([['event', r.event]]);
+    const lv = LEVELS[r.level] || ['🎯', 'lv-lvl-none'];
+    const c = mk('article', 'lv-card lv-chase ' + lv[1]);
+    const top = mk('div', 'lv-chase-top');
+    top.append(mk('span', 'lv-badge', lv[0]), mk('span', 'lv-ev', r.event, 'chase', 'event', w));
+    if (r.gap != null && r.gap <= 1) top.append(mk('span', 'lv-chip', 'So close!'));
+    const best = mk('div', 'lv-best');
+    best.append('Best ', mk('b', 'lv-time', r.best_time, 'chase', 'best_time', w));
+    const lvl = mk('div', 'lv-lvl');
+    lvl.append('Level: ', mk('b', null, r.level, 'chase', 'level', w));
+    c.append(top, best, lvl);
+    if (r.next) {
+      const gap = mk('div', 'lv-gapline');
+      gap.append(mk('b', 'lv-gapnum', s2(r.gap), 'chase', 'gap', w), ' seconds to ', mk('b', null, r.next, 'chase', 'next', w), ' (', mk('span', null, r.next_cut_time, 'chase', 'next_cut_time', w), ')');
+      const bar = mk('div', 'lv-prog');
+      bar.setAttribute('role', 'img');
+      bar.setAttribute('aria-label', Number(r.progress).toFixed(1) + '% of the way to ' + r.next + ' in the ' + r.event);
+      const fill = mk('div', 'lv-prog-fill');
+      fill.style.width = Math.max(4, Math.min(100, Number(r.progress))) + '%';
+      bar.append(fill, mk('span', 'lv-flag', '🏁'));
+      tip(bar, r.best_time + ' now · ' + r.next_cut_time + ' for ' + r.next);
+      const pl = mk('div', 'lv-proglabel');
+      pl.append(mk('b', null, Number(r.progress).toFixed(1), 'chase', 'progress', w), '% of the way there');
+      c.append(gap, bar, pl);
+    } else {
+      c.append(mk('div', 'lv-gapline', 'Top level reached! 🏆'));
+    }
+    el.appendChild(c);
+  }
+});
+
+dash.draw('splits', (el) => {
+  const g = dash.data('splits');
+  if (g.status !== 'ok' || !g.data) {
+    el.replaceChildren(g.status === 'error' ? 'Failed to load' : '—');
+    return;
+  }
+  el.replaceChildren();
+  const tip = tipper(el);
+  const byEvent = new Map();
+  for (const r of g.data) {
+    if (!byEvent.has(r.event)) byEvent.set(r.event, []);
+    byEvent.get(r.event).push(r);
+  }
+  for (const [ev, legs] of byEvent) {
+    legs.sort((a, b) => Number(a.leg) - Number(b.leg));
+    const secs = legs.map((l) => Number(l.seconds));
+    const max = Math.max(...secs);
+    const min = Math.min(...secs);
+    const w0 = W([['event', ev], ['leg', legs[0].leg]]);
+    const c = mk('article', 'lv-card');
+    const h = mk('div', 'lv-split-head');
+    h.append(mk('span', 'lv-ev', ev, 'splits', 'event', w0), mk('span', 'lv-meet', legs[0].meet, 'splits', 'meet', w0));
+    c.append(h);
+    for (const l of legs) {
+      const w = W([['event', ev], ['leg', l.leg]]);
+      const row = mk('div', 'lv-split-row');
+      const bar = mk('div', 'lv-split-bar');
+      const fill = mk('div', 'lv-split-fill');
+      fill.style.width = (Number(l.seconds) / max) * 100 + '%';
+      bar.append(fill);
+      bar.setAttribute('role', 'img');
+      bar.setAttribute('aria-label', ev + ', ' + l.label + ': ' + l.seconds + ' seconds');
+      tip(bar, ev + ' · ' + l.label + ': ' + l.seconds + ' s');
+      row.append(mk('span', 'lv-split-label', l.label, 'splits', 'label', w), bar, mk('span', 'lv-split-val', String(l.seconds), 'splits', 'seconds', w), mk('span', 'lv-split-fast', Number(l.seconds) === min ? '⚡' : ''));
+      c.append(row);
+    }
+    el.appendChild(c);
+  }
+});
+
+dash.draw('rows', (tb) => {
+  const g = dash.data('times');
+  if (g.status !== 'ok' || !g.data) {
+    tb.replaceChildren();
+    return;
+  }
+  const rows = g.data.slice().sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  tb.replaceChildren(...rows.map((r) => {
+    const tr = document.createElement('tr');
+    tr.setAttribute('data-key', enc(r.event) + ',' + enc(r.date));
+    for (const f of ['event', 'time', 'place', 'level', 'meet', 'when', 'kind']) {
+      const td = document.createElement('td');
+      td.textContent = r[f] == null ? '' : String(r[f]);
+      if (f === 'time') td.className = 'lv-num lv-strong';
+      if (f === 'place') td.className = 'lv-num';
+      tr.appendChild(td);
+    }
+    return tr;
+  }));
+});
+
+dash.run();
+</script>
+</body>
+</html>
