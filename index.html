@@ -63,7 +63,7 @@ body{margin:0;background:var(--color-bg);color:var(--color-fg);font-family:var(-
 .lv-ev{font-weight:800;font-size:18px}
 .lv-gain{font-weight:700;color:var(--color-ok)}
 .lv-gain b{font-size:20px;font-variant-numeric:tabular-nums}
-.lv-lane{position:relative;height:72px;border-radius:8px;background:linear-gradient(180deg,var(--lv-water2),var(--lv-water));overflow:hidden}
+.lv-lane{position:relative;height:80px;border-radius:8px;background:linear-gradient(180deg,var(--lv-water2),var(--lv-water));overflow:hidden}
 .lv-rope{position:absolute;left:0;right:0;height:5px;background:repeating-linear-gradient(90deg,#e53935 0 10px,#fff 10px 20px,#1e63c4 20px 30px)}
 .lv-rope-top{top:0}.lv-rope-bot{bottom:0}
 .lv-tline{position:absolute;left:16px;right:16px;top:50%;height:5px;margin-top:-2.5px;background:var(--lv-tline);border-radius:3px}
@@ -73,12 +73,17 @@ body{margin:0;background:var(--color-bg);color:var(--color-fg);font-family:var(-
 .lv-wall-l{left:0}.lv-wall-r{right:0}
 .lv-flags{position:absolute;top:5px;bottom:5px;border-left:3px dotted rgba(229,57,53,.75);transform:translateX(-50%)}
 .lv-band{position:absolute;top:5px;bottom:5px;z-index:1;background:color-mix(in srgb,#ffd23f 40%,transparent);border-left:2px dashed #e0a800}
-.lv-bandlabel{position:absolute;top:2px;left:50%;transform:translateX(-50%);background:#ffd23f;color:#3b2a00;font-size:11px;font-weight:800;padding:0 6px;border-radius:999px;white-space:nowrap}
+.lv-bandlabel{position:absolute;top:0;left:50%;transform:translateX(-50%);background:#ffd23f;color:#3b2a00;font-size:11px;font-weight:800;padding:0 6px;border-radius:999px;white-space:nowrap}
 .lv-bandlabel b{font-variant-numeric:tabular-nums}
 .lv-sw{position:absolute;top:50%;font-size:28px;line-height:1;z-index:2;cursor:default;user-select:none;transform:translate(-50%,-50%)}
-.lv-ghost{opacity:.8;filter:saturate(.6)}
+.lv-ghost{top:40%;opacity:.8;filter:saturate(.6)}
+.lv-leo{top:60%}
 .lv-ruler{position:relative;height:15px;margin-top:3px;font-size:11px;color:var(--color-fg-muted)}
 .lv-ruler span{position:absolute;top:0;transform:translateX(-50%);font-variant-numeric:tabular-nums;white-space:nowrap}
+.lv-lapchip{position:absolute;bottom:8px;left:14px;z-index:3;background:#ffd23f;color:#3b2a00;font-size:11px;font-weight:800;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.lv-race-foot .lv-age{color:var(--color-fg-muted);font-weight:600}
+.lv-table .lv-star{font-weight:800;color:#b07a00}
+.lv-table .lv-first{color:var(--color-fg-muted)}
 .lv-race-foot{margin-top:8px;color:var(--color-fg-muted);font-size:var(--cds-font-size-body)}
 .lv-race-foot b{color:var(--color-fg);font-variant-numeric:tabular-nums}
 .lv-race-foot .lv-now{color:var(--lv-mid)}
@@ -141,7 +146,7 @@ body{margin:0;background:var(--color-bg);color:var(--color-fg);font-family:var(-
 
   <section class="lv-sec" id="ghost-race">
     <h2><span aria-hidden="true">👻</span> Race your old self</h2>
-    <p class="lv-sub">Today's Leo 🏊 races old Leo 👻 in a <b data-draw="pool">—</b>-yard pool, turns and all. When today's Leo touches the wall, the yellow stretch is how far old Leo still has to swim.</p>
+    <p class="lv-sub">Today's Leo 🏊 races old Leo 👻 in a <b data-draw="pool">—</b>-yard pool, turns and all. When today's Leo touches the wall, the yellow stretch shows how far back old Leo is. A yellow badge means he's still a whole length or more behind.</p>
     <div class="lv-ghosts" data-draw="ghost" data-source="events"></div>
   </section>
 
@@ -159,10 +164,10 @@ body{margin:0;background:var(--color-bg);color:var(--color-fg);font-family:var(-
 
   <section class="lv-sec" id="every-swim">
     <h2><span aria-hidden="true">📋</span> Every swim</h2>
-    <p class="lv-sub">Newest first. "Entry time" is the best time Leo was entered with before a meet.</p>
+    <p class="lv-sub">Newest first. ⭐ means the swim beat every earlier time in that event.</p>
     <div class="lv-tablewrap">
       <table class="lv-table" data-source="times" data-row-key="event,date">
-        <thead><tr><th data-field="event">Event</th><th data-field="time">Time</th><th data-field="place">Place</th><th data-field="level">Level</th><th data-field="meet">Meet</th><th data-field="when">When</th><th data-field="kind">Type</th></tr></thead>
+        <thead><tr><th data-field="event">Event</th><th data-field="time">Time</th><th data-source="swims" data-field="new_best">Best?</th><th data-field="age">Age</th><th data-field="meet">Meet</th><th data-field="when">Date</th></tr></thead>
         <tbody data-draw="rows"></tbody>
       </table>
     </div>
@@ -170,14 +175,14 @@ body{margin:0;background:var(--color-bg);color:var(--color-fg);font-family:var(-
 
   <details class="lv-notes" id="notes">
     <summary>Where these times come from</summary>
-    <p>Race times, places and splits come from the UVAC meet result sheets. Entry times come from the December 2025 Winter Classic psych sheet. The Bronze, Silver and AG cutoffs are the boys 11–12 cutoffs printed on the meet results. "Old Leo" is his earliest time on file in that event, and "yards ahead" is how far old Leo would still have to swim when today's Leo finishes, if both swam at an even pace.</p>
+    <p>Every time comes from USA Swimming's official times database. The lap splits come from the UVAC meet result sheets. The Bronze, Silver and AG cutoffs are the boys 11–12 cutoffs printed on the 2026 meet results. "Old Leo" is his earliest time in that event, and "yards ahead" is how far old Leo would still have to swim when today's Leo finishes, if both swam at an even pace.</p>
   </details>
 </div>
-<p class="page-foot">Times from UVAC meet results · updated November 9, 2026</p>
+<p class="page-foot">Times from USA Swimming · updated November 10, 2026</p>
 </main>
 <script>
 window.dash = (function () {
-  var SOURCES = {"times": [{"event": "50 Back", "distance": "50", "kind": "Entry time", "meet": "Winter Classic psych sheet", "date": "2025-12-05", "when": "Dec 2025", "time": "46.97", "seconds": "46.97", "place": null, "level": null}, {"event": "100 Free", "distance": "100", "kind": "Entry time", "meet": "Winter Classic psych sheet", "date": "2025-12-05", "when": "Dec 2025", "time": "1:33.31", "seconds": "93.31", "place": null, "level": null}, {"event": "200 Back", "distance": "200", "kind": "Entry time", "meet": "Winter Classic psych sheet", "date": "2025-12-05", "when": "Dec 2025", "time": "3:35.42", "seconds": "215.42", "place": null, "level": null}, {"event": "50 Free", "distance": "50", "kind": "Race", "meet": "UVAC October Invite", "date": "2026-10-17", "when": "Oct 17 2026", "time": "37.60", "seconds": "37.60", "place": "9", "level": "Bronze"}, {"event": "200 Free", "distance": "200", "kind": "Race", "meet": "UVAC October Invite", "date": "2026-10-17", "when": "Oct 17 2026", "time": "2:57.19", "seconds": "177.19", "place": "3", "level": null}, {"event": "100 Breast", "distance": "100", "kind": "Race", "meet": "UVAC October Invite", "date": "2026-10-17", "when": "Oct 17 2026", "time": "1:52.62", "seconds": "112.62", "place": "3", "level": null}, {"event": "50 Fly", "distance": "50", "kind": "Race", "meet": "UVAC October Invite", "date": "2026-10-17", "when": "Oct 17 2026", "time": "45.83", "seconds": "45.83", "place": "7", "level": "Bronze"}, {"event": "50 Fly", "distance": "50", "kind": "Race", "meet": "Dorsi Raynolds Memorial", "date": "2026-11-06", "when": "Nov 6–8 2026", "time": "42.32", "seconds": "42.32", "place": "11", "level": "Bronze"}, {"event": "50 Back", "distance": "50", "kind": "Race", "meet": "Dorsi Raynolds Memorial", "date": "2026-11-06", "when": "Nov 6–8 2026", "time": "42.45", "seconds": "42.45", "place": "19", "level": "Bronze"}, {"event": "100 Free", "distance": "100", "kind": "Race", "meet": "Dorsi Raynolds Memorial", "date": "2026-11-06", "when": "Nov 6–8 2026", "time": "1:20.93", "seconds": "80.93", "place": "19", "level": "Bronze"}, {"event": "200 IM", "distance": "200", "kind": "Race", "meet": "Dorsi Raynolds Memorial", "date": "2026-11-06", "when": "Nov 6–8 2026", "time": "3:20.67", "seconds": "200.67", "place": "11", "level": null}], "standards": [{"event": "50 Free", "level": "AG", "seconds": "28.09"}, {"event": "50 Free", "level": "Silver", "seconds": "31.49"}, {"event": "50 Free", "level": "Bronze", "seconds": "38.79"}, {"event": "100 Free", "level": "AG", "seconds": "61.19"}, {"event": "100 Free", "level": "Silver", "seconds": "67.99"}, {"event": "100 Free", "level": "Bronze", "seconds": "83.79"}, {"event": "200 Free", "level": "AG", "seconds": "134.59"}, {"event": "200 Free", "level": "Silver", "seconds": "156.29"}, {"event": "200 Free", "level": "Bronze", "seconds": "172.39"}, {"event": "50 Back", "level": "AG", "seconds": "32.89"}, {"event": "50 Back", "level": "Silver", "seconds": "36.59"}, {"event": "50 Back", "level": "Bronze", "seconds": "46.99"}, {"event": "100 Breast", "level": "AG", "seconds": "81.99"}, {"event": "100 Breast", "level": "Silver", "seconds": "89.89"}, {"event": "100 Breast", "level": "Bronze", "seconds": "109.99"}, {"event": "50 Fly", "level": "AG", "seconds": "31.49"}, {"event": "50 Fly", "level": "Silver", "seconds": "35.59"}, {"event": "50 Fly", "level": "Bronze", "seconds": "47.99"}, {"event": "200 IM", "level": "AG", "seconds": "152.99"}, {"event": "200 IM", "level": "Silver", "seconds": "170.69"}, {"event": "200 IM", "level": "Bronze", "seconds": "199.99"}], "splits": [{"event": "100 Free", "meet": "Dorsi Raynolds Memorial", "leg": "1", "label": "1st 50", "seconds": "38.58"}, {"event": "100 Free", "meet": "Dorsi Raynolds Memorial", "leg": "2", "label": "2nd 50", "seconds": "42.35"}, {"event": "200 IM", "meet": "Dorsi Raynolds Memorial", "leg": "1", "label": "Fly", "seconds": "48.16"}, {"event": "200 IM", "meet": "Dorsi Raynolds Memorial", "leg": "2", "label": "Back", "seconds": "48.34"}, {"event": "200 IM", "meet": "Dorsi Raynolds Memorial", "leg": "3", "label": "Breast", "seconds": "59.53"}, {"event": "200 IM", "meet": "Dorsi Raynolds Memorial", "leg": "4", "label": "Free", "seconds": "44.64"}, {"event": "200 Free", "meet": "UVAC October Invite", "leg": "1", "label": "1st 50", "seconds": "38.49"}, {"event": "200 Free", "meet": "UVAC October Invite", "leg": "2", "label": "2nd 50", "seconds": "44.83"}, {"event": "200 Free", "meet": "UVAC October Invite", "leg": "3", "label": "3rd 50", "seconds": "48.29"}, {"event": "200 Free", "meet": "UVAC October Invite", "leg": "4", "label": "4th 50", "seconds": "45.58"}, {"event": "100 Breast", "meet": "UVAC October Invite", "leg": "1", "label": "1st 50", "seconds": "55.38"}, {"event": "100 Breast", "meet": "UVAC October Invite", "leg": "2", "label": "2nd 50", "seconds": "57.24"}]};
+  var SOURCES = {"times": [{"event": "50 Fly", "distance": "50", "meet": "Dorsi Raynolds Memorial Meet", "date": "2026-11-07", "when": "Nov 7 2026", "age": "12", "time": "42.32", "seconds": "42.32"}, {"event": "50 Back", "distance": "50", "meet": "Dorsi Raynolds Memorial Meet", "date": "2026-11-07", "when": "Nov 7 2026", "age": "12", "time": "42.45", "seconds": "42.45"}, {"event": "100 Free", "distance": "100", "meet": "Dorsi Raynolds Memorial Meet", "date": "2026-11-07", "when": "Nov 7 2026", "age": "12", "time": "1:20.93", "seconds": "80.93"}, {"event": "200 IM", "distance": "200", "meet": "Dorsi Raynolds Memorial Meet", "date": "2026-11-07", "when": "Nov 7 2026", "age": "12", "time": "3:20.67", "seconds": "200.67"}, {"event": "50 Free", "distance": "50", "meet": "October Invite", "date": "2026-10-17", "when": "Oct 17 2026", "age": "12", "time": "37.60", "seconds": "37.60"}, {"event": "50 Fly", "distance": "50", "meet": "October Invite", "date": "2026-10-17", "when": "Oct 17 2026", "age": "12", "time": "45.83", "seconds": "45.83"}, {"event": "100 Breast", "distance": "100", "meet": "October Invite", "date": "2026-10-17", "when": "Oct 17 2026", "age": "12", "time": "1:52.62", "seconds": "112.62"}, {"event": "200 Free", "distance": "200", "meet": "October Invite", "date": "2026-10-17", "when": "Oct 17 2026", "age": "12", "time": "2:57.19", "seconds": "177.19"}, {"event": "50 Free", "distance": "50", "meet": "September Splash & Dash", "date": "2026-09-18", "when": "Sep 18 2026", "age": "12", "time": "38.06", "seconds": "38.06"}, {"event": "100 Back", "distance": "100", "meet": "September Splash & Dash", "date": "2026-09-18", "when": "Sep 18 2026", "age": "12", "time": "1:30.10", "seconds": "90.10"}, {"event": "100 IM", "distance": "100", "meet": "September Splash & Dash", "date": "2026-09-18", "when": "Sep 18 2026", "age": "12", "time": "1:37.95", "seconds": "97.95"}, {"event": "50 Free", "distance": "50", "meet": "NHSA Championship", "date": "2026-03-14", "when": "Mar 14 2026", "age": "11", "time": "38.02", "seconds": "38.02"}, {"event": "50 Back", "distance": "50", "meet": "NHSA Championship", "date": "2026-03-14", "when": "Mar 14 2026", "age": "11", "time": "42.33", "seconds": "42.33"}, {"event": "100 Free", "distance": "100", "meet": "NHSA Championship", "date": "2026-03-14", "when": "Mar 14 2026", "age": "11", "time": "1:23.85", "seconds": "83.85"}, {"event": "50 Free", "distance": "50", "meet": "NES Bronze Championship", "date": "2026-01-17", "when": "Jan 17 2026", "age": "11", "time": "38.69", "seconds": "38.69"}, {"event": "100 Back", "distance": "100", "meet": "NES Bronze Championship", "date": "2026-01-17", "when": "Jan 17 2026", "age": "11", "time": "1:38.70", "seconds": "98.70"}, {"event": "50 Back", "distance": "50", "meet": "Winter Classic", "date": "2025-12-06", "when": "Dec 6 2025", "age": "11", "time": "45.05", "seconds": "45.05"}, {"event": "100 Free", "distance": "100", "meet": "Winter Classic", "date": "2025-12-06", "when": "Dec 6 2025", "age": "11", "time": "1:35.33", "seconds": "95.33"}, {"event": "50 Fly", "distance": "50", "meet": "Dorsi Raynolds Memorial Meet", "date": "2025-11-08", "when": "Nov 8 2025", "age": "11", "time": "44.81", "seconds": "44.81"}, {"event": "50 Back", "distance": "50", "meet": "Dorsi Raynolds Memorial Meet", "date": "2025-11-08", "when": "Nov 8 2025", "age": "11", "time": "49.09", "seconds": "49.09"}, {"event": "100 Free", "distance": "100", "meet": "Dorsi Raynolds Memorial Meet", "date": "2025-11-08", "when": "Nov 8 2025", "age": "11", "time": "1:33.33", "seconds": "93.33"}, {"event": "200 Back", "distance": "200", "meet": "Dorsi Raynolds Memorial Meet", "date": "2025-11-08", "when": "Nov 8 2025", "age": "11", "time": "3:35.42", "seconds": "215.42"}, {"event": "50 Free", "distance": "50", "meet": "October Invite", "date": "2025-10-11", "when": "Oct 11 2025", "age": "11", "time": "40.54", "seconds": "40.54"}, {"event": "50 Back", "distance": "50", "meet": "October Invite", "date": "2025-10-11", "when": "Oct 11 2025", "age": "11", "time": "46.97", "seconds": "46.97"}, {"event": "100 Free", "distance": "100", "meet": "October Invite", "date": "2025-10-11", "when": "Oct 11 2025", "age": "11", "time": "1:33.31", "seconds": "93.31"}, {"event": "50 Free", "distance": "50", "meet": "Winter Classic", "date": "2024-12-07", "when": "Dec 7 2024", "age": "10", "time": "1:06.43", "seconds": "66.43"}, {"event": "100 Back", "distance": "100", "meet": "Winter Classic", "date": "2024-12-07", "when": "Dec 7 2024", "age": "10", "time": "2:04.63", "seconds": "124.63"}, {"event": "200 Free", "distance": "200", "meet": "Winter Classic", "date": "2024-12-07", "when": "Dec 7 2024", "age": "10", "time": "3:56.85", "seconds": "236.85"}, {"event": "50 Free", "distance": "50", "meet": "Dorsi Raynolds Memorial Meet", "date": "2024-11-10", "when": "Nov 10 2024", "age": "10", "time": "51.09", "seconds": "51.09"}, {"event": "100 Back", "distance": "100", "meet": "Dorsi Raynolds Memorial Meet", "date": "2024-11-10", "when": "Nov 10 2024", "age": "10", "time": "2:05.96", "seconds": "125.96"}, {"event": "50 Back", "distance": "50", "meet": "Dorsi Raynolds Memorial Meet", "date": "2024-11-09", "when": "Nov 9 2024", "age": "10", "time": "56.72", "seconds": "56.72"}, {"event": "100 Free", "distance": "100", "meet": "Dorsi Raynolds Memorial Meet", "date": "2024-11-09", "when": "Nov 9 2024", "age": "10", "time": "2:02.25", "seconds": "122.25"}], "standards": [{"event": "50 Free", "level": "AG", "seconds": "28.09"}, {"event": "50 Free", "level": "Silver", "seconds": "31.49"}, {"event": "50 Free", "level": "Bronze", "seconds": "38.79"}, {"event": "100 Free", "level": "AG", "seconds": "61.19"}, {"event": "100 Free", "level": "Silver", "seconds": "67.99"}, {"event": "100 Free", "level": "Bronze", "seconds": "83.79"}, {"event": "200 Free", "level": "AG", "seconds": "134.59"}, {"event": "200 Free", "level": "Silver", "seconds": "156.29"}, {"event": "200 Free", "level": "Bronze", "seconds": "172.39"}, {"event": "50 Back", "level": "AG", "seconds": "32.89"}, {"event": "50 Back", "level": "Silver", "seconds": "36.59"}, {"event": "50 Back", "level": "Bronze", "seconds": "46.99"}, {"event": "100 Back", "level": "AG", "seconds": "70.39"}, {"event": "100 Back", "level": "Silver", "seconds": "79.29"}, {"event": "100 Back", "level": "Bronze", "seconds": "97.99"}, {"event": "200 Back", "level": "AG", "seconds": "153.79"}, {"event": "200 Back", "level": "Silver", "seconds": "169.99"}, {"event": "200 Back", "level": "Bronze", "seconds": "190.99"}, {"event": "100 Breast", "level": "AG", "seconds": "81.99"}, {"event": "100 Breast", "level": "Silver", "seconds": "89.89"}, {"event": "100 Breast", "level": "Bronze", "seconds": "109.99"}, {"event": "50 Fly", "level": "AG", "seconds": "31.49"}, {"event": "50 Fly", "level": "Silver", "seconds": "35.59"}, {"event": "50 Fly", "level": "Bronze", "seconds": "47.99"}, {"event": "100 IM", "level": "AG", "seconds": "71.49"}, {"event": "100 IM", "level": "Silver", "seconds": "78.59"}, {"event": "100 IM", "level": "Bronze", "seconds": "95.99"}, {"event": "200 IM", "level": "AG", "seconds": "152.99"}, {"event": "200 IM", "level": "Silver", "seconds": "170.69"}, {"event": "200 IM", "level": "Bronze", "seconds": "199.99"}], "splits": [{"event": "100 Free", "meet": "Dorsi Raynolds Memorial Meet · Nov 2026", "leg": "1", "label": "1st 50", "seconds": "38.58"}, {"event": "100 Free", "meet": "Dorsi Raynolds Memorial Meet · Nov 2026", "leg": "2", "label": "2nd 50", "seconds": "42.35"}, {"event": "200 IM", "meet": "Dorsi Raynolds Memorial Meet · Nov 2026", "leg": "1", "label": "Fly", "seconds": "48.16"}, {"event": "200 IM", "meet": "Dorsi Raynolds Memorial Meet · Nov 2026", "leg": "2", "label": "Back", "seconds": "48.34"}, {"event": "200 IM", "meet": "Dorsi Raynolds Memorial Meet · Nov 2026", "leg": "3", "label": "Breast", "seconds": "59.53"}, {"event": "200 IM", "meet": "Dorsi Raynolds Memorial Meet · Nov 2026", "leg": "4", "label": "Free", "seconds": "44.64"}, {"event": "200 Free", "meet": "October Invite · Oct 2026", "leg": "1", "label": "1st 50", "seconds": "38.49"}, {"event": "200 Free", "meet": "October Invite · Oct 2026", "leg": "2", "label": "2nd 50", "seconds": "44.83"}, {"event": "200 Free", "meet": "October Invite · Oct 2026", "leg": "3", "label": "3rd 50", "seconds": "48.29"}, {"event": "200 Free", "meet": "October Invite · Oct 2026", "leg": "4", "label": "4th 50", "seconds": "45.58"}, {"event": "100 Breast", "meet": "October Invite · Oct 2026", "leg": "1", "label": "1st 50", "seconds": "55.38"}, {"event": "100 Breast", "meet": "October Invite · Oct 2026", "leg": "2", "label": "2nd 50", "seconds": "57.24"}]};
   var calcs = {}, draws = [], cache = {};
   function data(id) {
     if (SOURCES[id]) return { status: 'ok', data: SOURCES[id] };
@@ -215,6 +220,7 @@ function mk(tag, cls, text, src, field, where) {
   return e;
 }
 const s2 = (n) => Number(n).toFixed(2);
+const POOL = 25;
 const motionOK = () => !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: no-preference)').matches);
 function tipper(root) {
   const t = document.createElement('div');
@@ -248,7 +254,6 @@ dash.calc('events', {
     }
     const out = [];
     for (const [event, rows] of byEvent) {
-      if (!rows.some((r) => r.kind === 'Race')) continue;
       const sorted = rows.slice().sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
       const first = sorted[0];
       const latest = sorted[sorted.length - 1];
@@ -257,6 +262,7 @@ dash.calc('events', {
       const f = Number(first.seconds);
       const l = Number(latest.seconds);
       const dist = Number(latest.distance);
+      const yards = twoOrMore ? Math.round(dist * (1 - l / f) * 10) / 10 : null;
       out.push({
         event,
         distance: dist,
@@ -264,11 +270,15 @@ dash.calc('events', {
         best_time: best.time,
         best: Number(best.seconds),
         first_time: twoOrMore ? first.time : null,
+        first_age: twoOrMore ? Number(first.age) : null,
         first: twoOrMore ? f : null,
         latest_time: latest.time,
+        latest_age: Number(latest.age),
         latest: l,
         drop: twoOrMore ? Math.round((f - l) * 100) / 100 : null,
-        yards_ahead: twoOrMore ? Math.round(dist * (1 - l / f) * 10) / 10 : null,
+        yards_ahead: yards,
+        lengths: Math.round(dist / POOL),
+        ghost_length: twoOrMore && l < f ? Math.min(Math.round(dist / POOL), Math.floor((dist * l) / f / POOL) + 1) : null,
       });
     }
     return out;
@@ -317,12 +327,28 @@ dash.calc('stats', {
   title: 'Season numbers',
   description: 'Counts of races swum, events raced, events where Leo got faster, and events at Bronze or better.',
   fn: (times, events, chase) => [{
-    races: times.filter((r) => r.kind === 'Race').length,
+    races: times.length,
     events: events.length,
     repeat: events.filter((e) => e.drop != null).length,
     faster: events.filter((e) => e.drop != null && e.drop > 0).length,
     medals: chase.filter((c) => c.level !== 'None yet').length,
   }],
+});
+
+dash.calc('swims', {
+  inputs: ['times'],
+  title: 'New best times',
+  description: 'For each swim, whether it beat every earlier time Leo had in that event.',
+  fn: (times) => {
+    const sorted = times.slice().sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+    const bestSoFar = {};
+    return sorted.map((r) => {
+      const s = Number(r.seconds);
+      const prev = bestSoFar[r.event];
+      if (prev == null || s < prev) bestSoFar[r.event] = s;
+      return { event: r.event, date: r.date, new_best: prev == null ? 'First swim' : s < prev ? '⭐ New best' : '' };
+    });
+  },
 });
 
 dash.draw('stat', (el) => {
@@ -361,7 +387,6 @@ dash.draw('takeaway', (el) => {
   el.replaceChildren(...(parts.length ? parts : ['—']));
 });
 
-const POOL = 25;
 dash.draw('pool', (el) => {
   el.textContent = String(POOL);
 });
@@ -390,7 +415,7 @@ dash.draw('ghost', (el) => {
     el.replaceChildren(g.status === 'error' ? 'Failed to load' : '—');
     return;
   }
-  const rows = g.data.filter((r) => r.first != null).sort((a, b) => b.drop - a.drop);
+  const rows = g.data.filter((r) => r.first != null).sort((a, b) => b.yards_ahead - a.yards_ahead);
   el.replaceChildren();
   const tip = tipper(el);
   const anim = !ghostRaced && motionOK() && rows.length > 0;
@@ -437,6 +462,13 @@ dash.draw('ghost', (el) => {
     const ghost = mk('span', 'lv-sw lv-ghost', '👻');
     const leo = mk('span', 'lv-sw lv-leo', '🏊');
     lane.append(band, ghost, leo);
+    const chip = mk('span', 'lv-lapchip');
+    chip.hidden = true;
+    const showChip = r.drop > 0 && r.ghost_length != null && Number(r.ghost_length) < Number(r.lengths);
+    if (showChip) {
+      chip.append('👻 is still on length ', mk('b', null, String(r.ghost_length), 'events', 'ghost_length', w), ' of ', mk('b', null, String(r.lengths), 'events', 'lengths', w), '!');
+      lane.append(chip);
+    }
     tip(ghost, 'Old Leo · ' + r.first_time);
     tip(leo, 'Leo now · ' + r.latest_time);
     const ruler = mk('div', 'lv-ruler');
@@ -447,17 +479,22 @@ dash.draw('ghost', (el) => {
       ruler.append(s);
     }
     const foot = mk('div', 'lv-race-foot');
-    foot.append('Then ', mk('b', null, r.first_time, 'events', 'first_time', w), ' → now ', mk('b', 'lv-now', r.latest_time, 'events', 'latest_time', w), ' · ', mk('b', null, s2(r.drop), 'events', 'drop', w), r.drop >= 0 ? ' seconds faster' : ' seconds (slower)');
+    const a1 = mk('span', 'lv-age');
+    a1.append('Age ', mk('span', null, String(r.first_age), 'events', 'first_age', w), ': ');
+    const a2 = mk('span', 'lv-age');
+    a2.append('age ', mk('span', null, String(r.latest_age), 'events', 'latest_age', w), ': ');
+    foot.append(a1, mk('b', null, r.first_time, 'events', 'first_time', w), ' → ', a2, mk('b', 'lv-now', r.latest_time, 'events', 'latest_time', w), ' · ', mk('b', null, s2(r.drop), 'events', 'drop', w), r.drop >= 0 ? ' seconds faster' : ' seconds (slower)');
     card.append(head, lane, ruler, foot);
     el.appendChild(card);
     if (anim) {
       putSwimmer(leo, inPool(0, D), true);
       putSwimmer(ghost, inPool(0, D), false);
-      lanes.push({ leo, ghost, band, showBand, D, leoT, oldT, tEnd, ms: (D / POOL) * 900 });
+      lanes.push({ leo, ghost, band, showBand, chip, showChip, D, leoT, oldT, tEnd, ms: 1200 + (D / POOL) * 600 });
     } else {
       putSwimmer(leo, endLeo, true);
       putSwimmer(ghost, endOld, false);
       band.hidden = !showBand;
+      chip.hidden = !showChip;
     }
   }
   if (!rows.length) el.append(mk('p', 'lv-empty', 'No event has two times yet. Swim one again to race old Leo!'));
@@ -473,7 +510,10 @@ dash.draw('ghost', (el) => {
         putSwimmer(L.leo, inPool(L.D * Math.min(1, t / L.leoT), L.D), true);
         putSwimmer(L.ghost, inPool(L.D * Math.min(1, t / L.oldT), L.D), false);
         if (u < 1) going = true;
-        else L.band.hidden = !L.showBand;
+        else {
+          L.band.hidden = !L.showBand;
+          L.chip.hidden = !L.showChip;
+        }
       }
       raceRAF = going ? requestAnimationFrame(step) : 0;
     };
@@ -568,15 +608,19 @@ dash.draw('rows', (tb) => {
     tb.replaceChildren();
     return;
   }
+  const sw = dash.data('swims');
+  const flags = new Map((sw.status === 'ok' && sw.data ? sw.data : []).map((s) => [s.event + '|' + s.date, s.new_best]));
   const rows = g.data.slice().sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
   tb.replaceChildren(...rows.map((r) => {
     const tr = document.createElement('tr');
     tr.setAttribute('data-key', enc(r.event) + ',' + enc(r.date));
-    for (const f of ['event', 'time', 'place', 'level', 'meet', 'when', 'kind']) {
+    for (const f of ['event', 'time', 'new_best', 'age', 'meet', 'when']) {
       const td = document.createElement('td');
-      td.textContent = r[f] == null ? '' : String(r[f]);
+      const v = f === 'new_best' ? flags.get(r.event + '|' + r.date) : r[f];
+      td.textContent = v == null ? '' : String(v);
       if (f === 'time') td.className = 'lv-num lv-strong';
-      if (f === 'place') td.className = 'lv-num';
+      if (f === 'age') td.className = 'lv-num';
+      if (f === 'new_best') td.className = v === 'First swim' ? 'lv-first' : 'lv-star';
       tr.appendChild(td);
     }
     return tr;
