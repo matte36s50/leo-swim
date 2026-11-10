@@ -175,7 +175,7 @@ body{margin:0;background:var(--color-bg);color:var(--color-fg);font-family:var(-
 
   <details class="lv-notes" id="notes">
     <summary>Where these times come from</summary>
-    <p>Every time comes from USA Swimming's official times database. The lap splits come from the UVAC meet result sheets. The Bronze, Silver and AG cutoffs are the boys 11–12 cutoffs printed on the 2026 meet results. "Old Leo" is his earliest time in that event, and "yards ahead" is how far old Leo would still have to swim when today's Leo finishes, if both swam at an even pace.</p>
+    <p>Every time comes from USA Swimming's official times database. The lap splits come from the UVAC meet result sheets. The Bronze, Silver and AG cutoffs are the boys 11–12 cutoffs printed on the 2026 meet results. "Old Leo" is his time from the previous race in that event, and "yards ahead" is how far old Leo would still have to swim when today's Leo finishes, if both swam at an even pace.</p>
   </details>
 </div>
 <p class="page-foot">Times from USA Swimming · updated November 10, 2026</p>
@@ -245,7 +245,7 @@ function tipper(root) {
 dash.calc('events', {
   inputs: ['times'],
   title: 'Each event: best, first and latest time',
-  description: 'For each event Leo has raced: his best time, his earliest and latest time on file, how many seconds faster he got, and how many yards ahead of his earliest time that puts him.',
+  description: 'For each event Leo has raced: his best time, his latest time and the one from the race before it, how many seconds faster he got, and how many yards ahead that puts him.',
   fn: (times) => {
     const byEvent = new Map();
     for (const r of times) {
@@ -255,7 +255,7 @@ dash.calc('events', {
     const out = [];
     for (const [event, rows] of byEvent) {
       const sorted = rows.slice().sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
-      const first = sorted[0];
+      const first = sorted.length > 1 ? sorted[sorted.length - 2] : sorted[0];
       const latest = sorted[sorted.length - 1];
       const best = rows.reduce((a, b) => (Number(b.seconds) < Number(a.seconds) ? b : a));
       const twoOrMore = sorted.length > 1;
@@ -373,7 +373,7 @@ dash.draw('takeaway', (el) => {
     nf.setAttribute('data-row', '0');
     const nr = mk('b', null, String(s.repeat), 'stats', 'repeat');
     nr.setAttribute('data-row', '0');
-    parts.push('Leo got faster in ', nf, ' of the ', nr, ' events he has swum more than once. ');
+    parts.push('Leo got faster in ', nf, ' of the ', nr, ' events since the last time he swam them. ');
   }
   if (top) {
     const w = W([['event', top.event]]);
